@@ -1,10 +1,7 @@
 import os
 import sys
 import torch
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.model import LSTMModel
-
 
 def test_lstm_model():
     model = LSTMModel()

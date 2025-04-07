@@ -16,7 +16,7 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=50):
         for batch_X, batch_y in train_loader:
             optimizer.zero_grad()
             outputs = model(batch_X)
-            # Split long line for PEP 8 compliance
+            # Split long line
             loss = criterion(
                 outputs,
                 batch_y.unsqueeze(1)
