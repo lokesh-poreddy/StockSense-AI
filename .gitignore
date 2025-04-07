@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Project specific
+results/
+*.xlsx
+*.png
+
+# OS specific
+.DS_Store

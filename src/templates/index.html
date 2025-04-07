@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Price Prediction Analysis</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-bottom: 30px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.05);
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #4CAF50; 
+            color: white;
+        }
+        tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .analysis-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .analysis-image { 
+            margin: 20px 0; 
+            max-width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .stock-selector {
+            margin: 20px 0;
+            padding: 10px;
+            width: 200px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .metrics-card {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .positive { color: #4CAF50; }
+        .negative { color: #f44336; }
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        .price-card {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .price-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Prediction Analysis Dashboard</h1>
+        
+        <select class="stock-selector" id="stockSelector" onchange="updateDashboard(this.value)">
+            <option value="all">All Stocks</option>
+            {% for row in summary_data %}
+            <option value="{{ row.Symbol }}">{{ row.Symbol }}</option>
+            {% endfor %}
+        </select>
+
+        <div id="realTimePrices" class="analysis-section">
+            {% for row in summary_data %}
+            <div class="price-card stock-price" data-symbol="{{ row.Symbol }}">
+                <h3>{{ row.Symbol }}</h3>
+                <div class="price-value">${{ "%.2f"|format(row.Current_Price) }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="analysis-section">
+            <h2>Interactive Chart</h2>
+            <div id="stockChart" class="chart-container"></div>
+        </div>
+
+        <h2>Performance Summary</h2>
+            <table>
+                <tr>
+                    <th>Symbol</th>
+                    <th>RMSE</th>
+                    <th>R2</th>
+                    <th>Volatility</th>
+                    <th>Annual Returns</th>
+                </tr>
+                {% for row in summary_data %}
+                <tr class="stock-row" data-symbol="{{ row.Symbol }}">
+                    <td>{{ row.Symbol }}</td>
+                    <td>{{ "%.4f"|format(row.RMSE) }}</td>
+                    <td>{{ "%.4f"|format(row.R2) }}</td>
+                    <td class="{{ 'positive' if row.Volatility < 0.3 else 'negative' }}">
+                        {{ "%.2f"|format(row.Volatility*100) }}%
+                    </td>
+                    <td class="{{ 'positive' if row['Ann. Returns'] > 0 else 'negative' }}">
+                        {{ "%.2f"|format(row['Ann. Returns']*100) }}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="analysis-section">
+            <h2>Stock Analysis Plots</h2>
+            {% for image in image_files %}
+            <div class="stock-plot" data-symbol="{{ image.split('_')[0] }}">
+                <h3>{{ image.split('_')[0] }} Analysis</h3>
+                <img src="{{ url_for('serve_results', filename=image) }}" class="analysis-image">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function updateDashboard(symbol) {
+            filterStock(symbol);
+            if (symbol !== 'all') {
+                updateChart(symbol);
+            }
+        }
+
+        function updateChart(symbol) {
+            fetch(`/stock_data/${symbol}`)
+                .then(response => response.json())
+                .then(data => {
+                    const trace1 = {
+                        x: data.dates,
+                        y: data.prices,
+                        type: 'scatter',
+                        name: 'Price'
+                    };
+
+                    const trace2 = {
+                        x: data.dates,
+                        y: data.volume,
+                        type: 'bar',
+                        name: 'Volume',
+                        yaxis: 'y2'
+                    };
+
+                    const layout = {
+                        title: `${symbol} Stock Price and Volume`,
+                        yaxis: {title: 'Price ($)'},
+                        yaxis2: {
+                            title: 'Volume',
+                            overlaying: 'y',
+                            side: 'right'
+                        }
+                    };
+
+                    Plotly.newPlot('stockChart', [trace1, trace2], layout);
+                });
+        }
+
+        function filterStock(symbol) {
+            const rows = document.querySelectorAll('.stock-row');
+            const plots = document.querySelectorAll('.stock-plot');
+            
+            if (symbol === 'all') {
+                rows.forEach(row => row.style.display = '');
+                plots.forEach(plot => plot.style.display = '');
+                return;
+            }
+            
+            rows.forEach(row => {
+                row.style.display = row.dataset.symbol === symbol ? '' : 'none';
+            });
+            
+            plots.forEach(plot => {
+                plot.style.display = plot.dataset.symbol === symbol ? '' : 'none';
+            });
+        }
+
+        // Initialize with first stock
+        const firstSymbol = document.querySelector('#stockSelector option:nth-child(2)').value;
+        updateChart(firstSymbol);
+
+        // Update prices periodically
+        setInterval(() => {
+            // Add real-time price update logic here
+        }, 60000);
+    </script>
+</body>
+</html>
