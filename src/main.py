@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-from analysis import calculate_metrics, calculate_returns, calculate_volatility
+from src.analysis import calculate_metrics, calculate_returns, calculate_volatility
 from data_processor import DataProcessor
 from model import LSTMModel
 

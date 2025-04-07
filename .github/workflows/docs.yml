@@ -23,7 +23,7 @@ jobs:
 
     - name: Generate documentation
       run: |
-        pdoc --html src/ --output-dir docs/
+        PYTHONPATH=$PYTHONPATH:$(pwd) pdoc --html src/ --output-dir docs/
 
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v3
