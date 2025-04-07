@@ -12,12 +12,8 @@ def test_lstm_model():
     seq_length = 10
     input_size = 1
     
-    # Test input shape
     x = torch.randn(batch_size, seq_length, input_size)
     output = model(x)
     
-    # Check output shape
     assert output.shape == (batch_size, 1)
-    
-    # Check model parameters
     assert isinstance(model, torch.nn.Module)

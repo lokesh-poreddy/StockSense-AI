@@ -15,12 +15,10 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=50):
         total_loss = 0
         for batch_X, batch_y in train_loader:
             optimizer.zero_grad()
-            if len(batch_X.shape) == 2:
-                batch_X = batch_X.unsqueeze(-1)
             outputs = model(batch_X)
-            # Split long line
+            # Split long line for PEP 8 compliance
             loss = criterion(
-                outputs, 
+                outputs,
                 batch_y.unsqueeze(1)
             )
             loss.backward()
