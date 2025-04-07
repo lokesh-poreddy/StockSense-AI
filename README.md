@@ -1,5 +1,7 @@
 # StockSense AI
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Project Description
 StockSense AI is an advanced stock market prediction system that leverages LSTM (Long Short-Term Memory) neural networks to analyze and predict stock prices for major technology and financial companies. The system processes historical data from 2018 onwards and provides real-time market insights through an interactive web dashboard.
 
