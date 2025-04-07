@@ -2,6 +2,11 @@
 StockSense AI - Data Processing Module
 Copyright (c) 2023 Lokesh Poreddy
 Licensed under the MIT License
+
+This module handles data processing for stock price prediction, including:
+- Loading and preprocessing stock data
+- Scaling and sequence preparation
+- Dataset creation for PyTorch
 """
 
 import pandas as pd
@@ -13,18 +18,40 @@ from torch.utils.data import DataLoader, Dataset
 
 
 class StockDataset(Dataset):
+    """Custom PyTorch Dataset for stock price data.
+
+    Args:
+        X (numpy.ndarray): Input features
+        y (numpy.ndarray): Target values
+    """
+
     def __init__(self, X, y):
         self.X = torch.FloatTensor(X)
         self.y = torch.FloatTensor(y)
 
     def __len__(self):
+        """Return the total number of samples."""
         return len(self.X)
 
     def __getitem__(self, idx):
+        """Return a sample from the dataset.
+
+        Args:
+            idx (int): Index of the sample
+
+        Returns:
+            tuple: (features, target) pair
+        """
         return self.X[idx], self.y[idx]
 
 
 class DataProcessor:
+    """Handles data processing for stock price prediction.
+
+    Args:
+        file_paths (dict or str): Paths to stock price data files
+    """
+
     def __init__(self, file_paths):
         self.file_paths = (
             file_paths if isinstance(file_paths, dict) else {"Default": file_paths}
@@ -32,12 +59,26 @@ class DataProcessor:
         self.scalers = {}
 
     def load_data(self):
+        """Load stock price data from Excel files.
+
+        Returns:
+            dict: Dictionary containing DataFrames for each stock
+        """
         self.data = {}
         for company, file_path in self.file_paths.items():
             self.data[company] = pd.read_excel(file_path)
         return self.data
 
     def prepare_data(self, sequence_length=60, batch_size=32):
+        """Prepare data for model training.
+
+        Args:
+            sequence_length (int): Length of input sequences
+            batch_size (int): Size of batches for training
+
+        Returns:
+            tuple: (datasets, scalers) pair containing prepared data
+        """
         datasets = {}
         for company, df in self.data.items():
             scaler = MinMaxScaler()
