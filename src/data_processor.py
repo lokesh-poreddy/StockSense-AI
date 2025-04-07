@@ -1,5 +1,11 @@
-import numpy as np
+"""
+StockSense AI - Data Processing Module
+Copyright (c) 2023 Lokesh Poreddy
+Licensed under the MIT License
+"""
+
 import pandas as pd
+import numpy as np
 import torch
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler

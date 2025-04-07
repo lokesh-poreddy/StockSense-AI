@@ -1,3 +1,9 @@
+"""
+StockSense AI - LSTM Model Implementation
+Copyright (c) 2023 Lokesh Poreddy
+Licensed under the MIT License
+"""
+
 import torch
 import torch.nn as nn
 

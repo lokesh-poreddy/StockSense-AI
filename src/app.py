@@ -1,3 +1,9 @@
+"""
+StockSense AI - Web Interface
+Copyright (c) 2023 Lokesh Poreddy
+Licensed under the MIT License
+"""
+
 from flask import Flask, render_template, send_from_directory, jsonify
 import os
 import pandas as pd

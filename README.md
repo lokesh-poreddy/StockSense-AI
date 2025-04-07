@@ -1,6 +1,13 @@
 # StockSense AI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.1.0-red.svg)](https://pytorch.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)](https://flask.palletsprojects.com/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Build Status](https://img.shields.io/github/workflow/status/lokesh-poreddy/StockSense-AI/CI)](https://github.com/lokesh-poreddy/StockSense-AI/actions)
+[![Documentation Status](https://img.shields.io/github/workflow/status/lokesh-poreddy/StockSense-AI/Documentation?label=docs)](https://lokesh-poreddy.github.io/StockSense-AI/)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/lokesh-poreddy/StockSense-AI/releases)
 
 ## Project Description
 StockSense AI is an advanced stock market prediction system that leverages LSTM (Long Short-Term Memory) neural networks to analyze and predict stock prices for major technology and financial companies. The system processes historical data from 2018 onwards and provides real-time market insights through an interactive web dashboard.
