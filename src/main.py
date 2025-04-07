@@ -18,7 +18,11 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=50):
             if len(batch_X.shape) == 2:
                 batch_X = batch_X.unsqueeze(-1)
             outputs = model(batch_X)
-            loss = criterion(outputs, batch_y.unsqueeze(1))  # Split long line
+            # Split long line
+            loss = criterion(
+                outputs, 
+                batch_y.unsqueeze(1)
+            )
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
