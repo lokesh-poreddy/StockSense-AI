@@ -1,21 +1,21 @@
+import os
+import yfinance as yf
 from datetime import datetime
 
-import yfinance as yf
-
-
-def download_stock_data(symbols, start_date="2018-01-01", end_date=None):
-    if end_date is None:
-        end_date = datetime.now().strftime("%Y-%m-%d")
-
+def download_stock_data(symbols):
+    # Create data directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+    
     for symbol in symbols:
         print(f"Downloading data for {symbol}...")
         stock = yf.Ticker(symbol)
-        data = stock.history(start=start_date, end=end_date)
-
+        data = stock.history(period="5y")
+        
         # Convert timezone-aware timestamps to timezone-naive
         data.index = data.index.tz_localize(None)
-
-        data.to_excel(f"{symbol}_Stock_Price_Prediction.xlsx")
+        
+        # Save to data directory
+        data.to_excel(f"data/{symbol}_Stock_Price_Prediction.xlsx")
         print(f"Data saved for {symbol}")
 
 

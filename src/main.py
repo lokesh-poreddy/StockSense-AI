@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
-import numpy as np  # Add this import
+import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 
-from src.analysis import calculate_metrics, calculate_returns, calculate_volatility
+from analysis import calculate_metrics, calculate_returns, calculate_volatility
 from data_processor import DataProcessor
 from model import LSTMModel
 
@@ -46,16 +46,19 @@ def main():
         "WMT",
     ]
     stock_files = {
-        symbol: f"{symbol}_Stock_Price_Prediction.xlsx" for symbol in symbols
+        symbol: f"data/{symbol}_Stock_Price_Prediction.xlsx" for symbol in symbols
     }
 
     results = {}
 
     # Initialize data processor with multiple stocks
     data_processor = DataProcessor(stock_files)
-
-    # Load and prepare data
-    datasets, scalers = data_processor.prepare_data()  # Remove unused 'data' variable
+    
+    # Load data first
+    data_processor.load_data()
+    
+    # Then prepare data
+    datasets, scalers = data_processor.prepare_data()
 
     # Create results directory if it doesn't exist
     import os
@@ -108,7 +111,13 @@ def main():
         plt.legend()
 
         plt.subplot(2, 1, 2)
-        plt.hist(returns, bins=50, density=True, alpha=0.7)
+        # Filter out infinite values and clip extreme returns
+        filtered_returns = np.array(returns)
+        filtered_returns = filtered_returns[np.isfinite(filtered_returns)]
+        filtered_returns = np.clip(filtered_returns, np.percentile(filtered_returns, 1), 
+                                 np.percentile(filtered_returns, 99))
+        
+        plt.hist(filtered_returns, bins=50, density=True, alpha=0.7)
         plt.title(f"{symbol} Returns Distribution")
         plt.xlabel("Returns")
         plt.ylabel("Frequency")
